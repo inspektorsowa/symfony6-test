@@ -1,0 +1,63 @@
+version: "3"
+services:
+    core:
+        build: docker/core
+        container_name: symfony-test-core
+        volumes:
+            - ./core:/var/www
+            - ./docker/core/entrypoint.sh:/docker/entrypoint.sh
+            - ./docker/core/php.ini:/etc/php8/php.ini
+            - ./docker/core/php.ini:/usr/local/etc/php/php-cli.ini
+        ports:
+            - "8000:8000"
+        links:
+            - database:database
+            - rabbit:rabbit
+            - redis:redis
+        environment:
+            APP_ENV: "dev"
+            DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:${POSTGRES_PORT}/${POSTGRES_DB}?serverVersion=${POSTGRES_VERSION}&charset=utf8"
+    frontend:
+        build: docker/frontend
+        container_name: symfony-test-frontend
+        volumes:
+            - ./frontend:/var/www
+            - ./docker/frontend/entrypoint.sh:/docker/entrypoint.sh
+        ports:
+            - "8080:8080"
+    socket:
+        build: docker/socket
+        container_name: symfony-test-socket
+        volumes:
+            - ./socket:/var/www
+            - ./docker/socket/entrypoint.sh:/docker/entrypoint.sh
+        ports:
+            - "3000:3000"
+        links:
+            - rabbit:rabbit
+    database:
+        image: postgres:${POSTGRES_VERSION:-14}-alpine
+        container_name: symfony-test-database
+        ports:
+            - "5432:5432"
+        environment:
+            POSTGRES_DB: ${POSTGRES_DB}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+            POSTGRES_USER: ${POSTGRES_USER}
+        volumes:
+            - ./database/data:/var/lib/postgresql/data:rw
+            - ./database/pg-initdb.d:/docker-entrypoint-initdb.d
+    rabbit:
+        image: rabbitmq:management-alpine
+        container_name: symfony-test-rabbit
+        environment:
+            RABBITMQ_DEFAULT_USER: "${RABBITMQ_DEFAULT_USER}"
+            RABBITMQ_DEFAULT_PASS: "${RABBITMQ_DEFAULT_PASS}"
+        ports:
+            - "5672:5672"
+            - "15672:15672"
+    redis:
+        image: redis:alpine
+        container_name: symfony-test-redis
+        ports:
+            - "6379:6379"

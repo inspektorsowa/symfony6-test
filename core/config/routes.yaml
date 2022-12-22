@@ -1,0 +1,3 @@
+controllers:
+    resource: ../src/User/UI/Web/
+    type: attribute
