@@ -1,4 +1,5 @@
 vendor
+/public/bundles/*
 .env
 var/cache/*
 var/log/*

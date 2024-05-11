@@ -1,5 +1,4 @@
-FROM php:8.1-fpm-alpine
-FROM composer:2
+FROM composer:2.7
 
 WORKDIR /var/www
 
@@ -11,18 +10,17 @@ RUN apk add --no-cache \
     wget \
     postgresql-client \
     sudo \
-    yaml
+    yaml \
+    $PHPIZE_DEPS
 
-# Install php tools
-RUN apk add --no-cache $PHPIZE_DEPS
-RUN pecl install xdebug-3.1.0
-RUN docker-php-ext-enable xdebug
+# xdebug
+RUN apk add --update linux-headers
+RUN pecl install xdebug-3.3.2 && docker-php-ext-enable xdebug
+
+# other php tools
 RUN pecl install apcu && docker-php-ext-enable apcu
 RUN pecl install redis && docker-php-ext-enable redis
-RUN set -ex \
-  && apk --no-cache add \
-    postgresql-dev
-RUN docker-php-ext-install pdo pdo_pgsql
+RUN set -ex && apk --no-cache add postgresql-dev && docker-php-ext-install pdo pdo_pgsql
 # RUN docker-php-ext-install -j$(nproc) intl
 # RUN docker-php-ext-install -j$(nproc) pdo_pgsql
 # RUN docker-php-ext-install -j$(nproc) pgsql
@@ -45,4 +43,4 @@ RUN sudo apk add symfony-cli
 
 EXPOSE 8000
 
-CMD ["/docker/entrypoint.sh"]
+ENTRYPOINT ["sh", "/docker/entrypoint.sh"]

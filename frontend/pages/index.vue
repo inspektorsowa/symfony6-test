@@ -44,7 +44,7 @@ export default {
       this.text = ''
     },
     formatDate(date) {
-      return dayjs.unix(date).format('LTS l')
+      return dayjs.unix(date).format('HH:mm:ss YYYY-MM-DD')
     }
   }
 }

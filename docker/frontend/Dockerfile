@@ -1,4 +1,4 @@
-FROM node:16-bullseye
+FROM node:20.13-alpine3.19
 
 RUN mkdir /docker
 
@@ -8,4 +8,4 @@ ENV PORT=8080
 
 WORKDIR /var/www
 
-CMD ["/docker/entrypoint.sh"]
+ENTRYPOINT ["sh", "/docker/entrypoint.sh"]

@@ -4,8 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+    "start": "pm2 start index.js --watch --no-daemon --restart-delay=2000"
   },
   "dependencies": {
     "amqplib": "^0.10.3",
@@ -14,6 +13,6 @@
     "socket.io": "^4.5.4"
   },
   "devDependencies": {
-    "nodemon": "^2.0.20"
+    "pm2": "^5.1.0"
   }
 }

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo This is frontend server
+echo "This is frontend server"
 pwd
 yarn
 yarn dev
